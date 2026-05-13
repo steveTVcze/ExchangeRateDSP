@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ExchangeRateDSP.Tests/ExchangeRateDSP.Tests.csproj" />
+  <Project Path="ExchangeRateDSP/ExchangeRateDSP.csproj" />
+</Solution>
