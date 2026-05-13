@@ -1,0 +1,42 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Stažení kódu
+      uses: actions/checkout@v4
+
+    - name: Nastavení .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Obnova závislostí
+      run: dotnet restore
+
+    - name: Build aplikace
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Spuštění testů a měření Coverage
+      run: dotnet test ExchangeRateDSP.Tests/ExchangeRateDSP.Tests.csproj --no-build --verbosity normal --collect:"XPlat Code Coverage"
+
+    - name: Uložení Coverage Reportu pro učitele
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-coverage-report
+        path: '**/coverage.cobertura.xml'
+
+    - name: Příprava balíčku pro nasazení (Publish)
+      run: dotnet publish ExchangeRateDSP/ExchangeRateDSP.csproj -c Release -o ./publish
+
+    - name: Uložení hotové aplikace (Simulace nasazení na Azure)
+      uses: actions/upload-artifact@v4
+      with:
+        name: production-app
+        path: ./publish
