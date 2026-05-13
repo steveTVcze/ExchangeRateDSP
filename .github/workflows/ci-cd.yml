@@ -24,7 +24,7 @@ jobs:
       run: dotnet build --no-restore --configuration Release
 
     - name: Spuštění testů a měření Coverage
-      run: dotnet test ExchangeRateDSP.Tests/ExchangeRateDSP.Tests.csproj --no-build --verbosity normal --collect:"XPlat Code Coverage"
+      run: dotnet test ExchangeRateDSP.Tests/ExchangeRateDSP.Tests.csproj --verbosity normal --collect:"XPlat Code Coverage"
 
     - name: Uložení Coverage Reportu pro učitele
       uses: actions/upload-artifact@v4
