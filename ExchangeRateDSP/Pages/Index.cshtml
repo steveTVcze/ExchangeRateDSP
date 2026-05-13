@@ -1,0 +1,77 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboarda";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Měnové kurzy (Základ: @Model.BaseCurrency)</h2>
+
+    @if (Model.ApiFailed)
+    {
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Výpadek API!</h4>
+            <p>Nepodařilo se získat aktuální data z ExchangeRate API. Zkuste to prosím později.</p>
+            <hr>
+            <p class="mb-0">Chyba byla zalogována do systému.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">Nejsilnější měna (nejvyšší hodnota)</div>
+                    <div class="card-body">
+                        <h4 class="card-title">@Model.StrongestCurrency</h4>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card text-white bg-danger mb-3">
+                    <div class="card-header">Nejslabší měna (nejnižší hodnota)</div>
+                    <div class="card-body">
+                        <h4 class="card-title">@Model.WeakestCurrency</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <canvas id="ratesChart" height="100"></canvas>
+            </div>
+        </div>
+    }
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const labels = @Html.Raw(Model.ChartLabelsJson);
+    const dataValues = @Html.Raw(Model.ChartDataJson);
+
+    if (labels.length > 0) {
+        const ctx = document.getElementById('ratesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Kurz vůči @Model.BaseCurrency',
+                    data: dataValues,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: false }
+                }
+            }
+        });
+    }
+</script>

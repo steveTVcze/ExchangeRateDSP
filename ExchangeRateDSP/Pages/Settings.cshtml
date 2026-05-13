@@ -1,0 +1,38 @@
+﻿@page
+@model SettingsModel
+@{
+    ViewData["Title"] = "Settingos";
+}
+
+
+<div class="container mt-4">
+    <h2>Uživatelské nastavení</h2>
+    <p class="text-muted">Vyberte si základní měnu a seznam sledovaných měn.</p>
+
+    @if (Model.ShowSuccessMessage)
+    {
+        <div class="alert alert-success" role="alert">
+            Nastavení bylo úspěšně uloženo do databáze!
+        </div>
+    }
+
+    <div class="card shadow-sm col-md-6">
+        <div class="card-body">
+            <form method="post">
+                <div class="mb-3">
+                    <label for="baseCurrency" class="form-label">Základní měna (Base Currency)</label>
+                    <input type="text" class="form-control" id="baseCurrency" asp-for="BaseCurrency" required placeholder="Např. USD nebo EUR">
+                    <div class="form-text">Free API plán exchangerate.host podporuje primárně USD.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="selectedCurrencies" class="form-label">Sledované měny (oddělené čárkou)</label>
+                    <input type="text" class="form-control" id="selectedCurrencies" asp-for="SelectedCurrencies" required placeholder="Např. CZK,GBP,EUR">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Uložit nastavení</button>
+                <a href="/" class="btn btn-outline-secondary ms-2">Zpět na Dashboard</a>
+            </form>
+        </div>
+    </div>
+</div>
