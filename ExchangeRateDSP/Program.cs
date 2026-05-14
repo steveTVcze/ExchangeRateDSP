@@ -6,18 +6,26 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=app.db"));
+
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (builder.Environment.IsDevelopment())
-{
-    //v developmentu pouzivam postgres v dockeru
-    builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=app.db"));
-}
-else
-{
-    // V produkci (CI/CD / server) použijeme SQLite pro snazší deploy
-    //builder.Services.AddDbContext<AppDbContext>(options =>
-    //    options.UseSqlite("Data Source=app.db"));
-}
+
+
+
+
+//if (builder.Environment.IsDevelopment())
+//{
+//    //v developmentu pouzivam postgres v dockeru
+//    builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=app.db"));
+//}
+//else
+//{
+//    // V produkci (CI/CD / server) použijeme SQLite pro snazší deploy
+//    //builder.Services.AddDbContext<AppDbContext>(options =>
+//    //    options.UseSqlite("Data Source=app.db"));
+//}
 builder.Services.AddHttpClient<ExchangeRateDSP.Services.CurrencyService>();
 
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)
