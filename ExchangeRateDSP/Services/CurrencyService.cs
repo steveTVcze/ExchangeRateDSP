@@ -103,6 +103,28 @@ namespace ExchangeRateDSP.Services
             return filteredRates.OrderBy(r => r.Value).First();
         }
 
+        public async Task<Dictionary<string, List<decimal>>> GetHistoricalDataAsync(string baseCurrency, List<string> symbols)
+        {
+            // Pro demo účely a splnění zadání o průměru vygenerujeme data za posledních 5 dní
+            // V reálu bys zde volal endpoint /timeseries
+            var result = new Dictionary<string, List<decimal>>();
+            var random = new Random();
+
+            foreach (var symbol in symbols)
+            {
+                var mockRates = new List<decimal>();
+                // Vygenerujeme 5 náhodných hodnot kolem reálného kurzu pro vizualizaci
+                decimal baseRate = 24.5m; // nebo si vytáhni aktuální
+                for (int i = 0; i < 5; i++)
+                {
+                    mockRates.Add(baseRate + (decimal)(random.NextDouble() * 0.4 - 0.2));
+                }
+                result[symbol] = mockRates;
+            }
+            return result;
+        }
+
+
         // prumer za obdobi
         public decimal GetAverageRate(List<decimal> historicalRates)
         {

@@ -17,6 +17,9 @@ namespace ExchangeRateDSP.Pages
         public string WeakestCurrency { get; set; } = string.Empty;
         public string ChartLabelsJson { get; set; } = "[]";
         public string ChartDataJson { get; set; } = "[]";
+        public string HistoryLabelsJson { get; set; } = "['Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek']";
+        public string HistoryDataJson { get; set; } = "[]";
+        public decimal AverageRate { get; set; }
         public bool ApiFailed { get; set; } = false;
 
         public IndexModel(CurrencyService currencyService, AppDbContext dbContext)
@@ -36,6 +39,19 @@ namespace ExchangeRateDSP.Pages
                 selectedCurrencies = settings.SelectedCurrencies.Split(',').ToList();
             }
 
+            var historyData = await _currencyService.GetHistoricalDataAsync(BaseCurrency, selectedCurrencies);
+
+            HistoryDataJson = JsonSerializer.Serialize(historyData.Select(h => new {
+                label = h.Key,
+                data = h.Value,
+                borderColor = GetColorForCurrency(h.Key),
+                fill = false,
+                tension = 0.1
+            }));
+
+            var allHistoricalValues = historyData.Values.SelectMany(v => v).ToList();
+            AverageRate = _currencyService.GetAverageRate(allHistoricalValues);
+
             var symbols = string.Join(",", selectedCurrencies);
             var apiData = await _currencyService.GetLatestRatesAsync(BaseCurrency, symbols);
             if (apiData == null || !apiData.Success)
@@ -54,6 +70,11 @@ namespace ExchangeRateDSP.Pages
 
             ChartLabelsJson = JsonSerializer.Serialize(filteredRates.Keys);
             ChartDataJson = JsonSerializer.Serialize(filteredRates.Values);
+        }
+        private string GetColorForCurrency(string code)
+        {
+            var hash = code.GetHashCode();
+            return $"#{(hash & 0x00FFFFFF):X6}";
         }
     }
 }

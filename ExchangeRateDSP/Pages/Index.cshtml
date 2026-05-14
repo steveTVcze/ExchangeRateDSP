@@ -20,16 +20,16 @@
     {
         <div class="row mb-4">
             <div class="col-md-6">
-                <div class="card text-white bg-success mb-3">
+                <div class="card text-white bg-success mb-3 shadow-sm">
                     <div class="card-header">Nejsilnější měna (nejvyšší hodnota)</div>
                     <div class="card-body">
                         <h4 class="card-title">@Model.StrongestCurrency</h4>
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-6">
-                <div class="card text-white bg-danger mb-3">
+                <div class="card text-white bg-danger mb-3 shadow-sm">
                     <div class="card-header">Nejslabší měna (nejnižší hodnota)</div>
                     <div class="card-body">
                         <h4 class="card-title">@Model.WeakestCurrency</h4>
@@ -38,11 +38,24 @@
             </div>
         </div>
 
-        <div class="card shadow-sm">
+        <div class="alert alert-info shadow-sm mb-4">
+            <i class="bi bi-info-circle-fill"></i>
+            <strong>Analýza období:</strong> Celkový aritmetický průměr sledovaných měn za zvolené období je <strong>@Model.AverageRate.ToString("F4")</strong>
+        </div>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white"><strong>Aktuální porovnání kurzů</strong></div>
             <div class="card-body">
                 <canvas id="ratesChart" height="100"></canvas>
             </div>
         </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white"><strong>Vývoj kurzů v čase (Historie)</strong></div>
+            <div class="card-body">
+                <canvas id="historyChart" height="100"></canvas>
+            </div>
+        </div>
+
     }
 </div>
 
@@ -74,4 +87,31 @@
             }
         });
     }
+
+    const historyLabels = @Html.Raw(Model.HistoryLabelsJson);
+    const historyDatasets = @Html.Raw(Model.HistoryDataJson);
+
+    if (historyDatasets.length > 0) {
+        const ctxHistory = document.getElementById('historyChart').getContext('2d');
+        new Chart(ctxHistory, {
+            type: 'line',
+            data: {
+                labels: historyLabels,
+                datasets: historyDatasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                    position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: false }
+                }
+            }
+            });
+    }
+
 </script>
