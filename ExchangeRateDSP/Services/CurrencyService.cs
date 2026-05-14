@@ -36,7 +36,7 @@ namespace ExchangeRateDSP.Services
                 var apiData = JsonSerializer.Deserialize<ExchangeRateApiResponse>(jsonString);
 
                 if (apiData != null && apiData.Rates != null)
-                {)
+                {
                     var cleanedRates = new Dictionary<string, decimal>();
                     string baseCurr = apiData.Base ?? "USD";
 
