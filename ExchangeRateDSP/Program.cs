@@ -10,8 +10,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 if (builder.Environment.IsDevelopment())
 {
     //v developmentu pouzivam postgres v dockeru
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseNpgsql(connectionString));
+    builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=app.db"));
 }
 else
 {
@@ -35,6 +34,12 @@ builder.Services.AddRazorPages(options =>
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.EnsureCreated();
+}
 
 
 // Configure the HTTP request pipeline.
