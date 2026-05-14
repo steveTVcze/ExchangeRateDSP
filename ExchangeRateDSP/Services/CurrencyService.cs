@@ -36,20 +36,32 @@ namespace ExchangeRateDSP.Services
                 var apiData = JsonSerializer.Deserialize<ExchangeRateApiResponse>(jsonString);
 
                 if (apiData != null && apiData.Rates != null)
-                {
+                {)
                     var cleanedRates = new Dictionary<string, decimal>();
                     string baseCurr = apiData.Base ?? "USD";
 
                     foreach (var kvp in apiData.Rates)
                     {
                         string currencyCode = kvp.Key.StartsWith(baseCurr) ? kvp.Key.Substring(baseCurr.Length) : kvp.Key;
-
                         cleanedRates[currencyCode] = kvp.Value;
                     }
 
                     apiData.Rates = cleanedRates;
-                }
 
+                    if (apiData.Base != baseCurrency && apiData.Rates.ContainsKey(baseCurrency))
+                    {
+                        decimal divider = apiData.Rates[baseCurrency];
+                        var recalculatedRates = new Dictionary<string, decimal>();
+
+                        foreach (var rate in apiData.Rates)
+                        {
+                            recalculatedRates[rate.Key] = rate.Value / divider;
+                        }
+
+                        apiData.Rates = recalculatedRates;
+                        apiData.Base = baseCurrency;
+                    }
+                }
 
                 return apiData;
             }
@@ -62,7 +74,6 @@ namespace ExchangeRateDSP.Services
                     Timestamp = DateTime.UtcNow
                 };
 
-                // Uložíme do databáze
                 _context.Logs.Add(log);
                 await _context.SaveChangesAsync();
 
@@ -85,6 +96,9 @@ namespace ExchangeRateDSP.Services
             }
             return filteredRates.OrderByDescending(r => r.Value).First();
         }
+
+
+
 
         // nejslabsi mena
         public KeyValuePair<string, decimal> GetWeakestCurrency(Dictionary<string, decimal> rates, List<string> selectedCurrencies)
