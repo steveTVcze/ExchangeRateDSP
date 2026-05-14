@@ -60,12 +60,28 @@ namespace ExchangeRateDSP.Pages
                 return;
             }
 
+            if (!string.IsNullOrEmpty(apiData.Base) && apiData.Base != BaseCurrency && apiData.Rates.ContainsKey(BaseCurrency))
+            {
+                decimal divider = apiData.Rates[BaseCurrency];
+
+                var recalculatedRates = new Dictionary<string, decimal>();
+                foreach (var rate in apiData.Rates)
+                {
+                    recalculatedRates[rate.Key] = rate.Value / divider;
+                }
+
+                apiData.Rates = recalculatedRates;
+                apiData.Base = BaseCurrency;
+            }
+
             var strongest = _currencyService.GetStrongestCurrency(apiData.Rates, selectedCurrencies);
             var weakest = _currencyService.GetWeakestCurrency(apiData.Rates, selectedCurrencies);
 
-            StrongestCurrency = $"{strongest.Key} ({strongest.Value})";
-            WeakestCurrency = $"{weakest.Key} ({weakest.Value})";
+            StrongestCurrency = $"{strongest.Key} ({strongest.Value:F4})";
+            WeakestCurrency = $"{weakest.Key} ({weakest.Value:F4})";
+
             BaseCurrency = apiData.Base ?? BaseCurrency;
+
             var filteredRates = apiData.Rates.Where(r => selectedCurrencies.Contains(r.Key)).ToDictionary(r => r.Key, r => r.Value);
 
             ChartLabelsJson = JsonSerializer.Serialize(filteredRates.Keys);

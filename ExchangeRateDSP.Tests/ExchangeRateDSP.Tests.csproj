@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+	<TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-	<Exclude>[ExchangeRateDSP]ExchangeRateDSP.Pages.*,[ExchangeRateDSP]ExchangeRateDSP.Migrations.*,[ExchangeRateDSP]ExchangeRateDSP.Models.*,[ExchangeRateDSP]ExchangeRateDSP.Data.*,Program</Exclude>
-  </PropertyGroup>
+    <Exclude>[*]ExchangeRateDSP.Pages.*,[*]ExchangeRateDSP.Program,[*]ExchangeRateDSP.Startup</Exclude>
+</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />

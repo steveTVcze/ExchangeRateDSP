@@ -114,7 +114,7 @@ namespace ExchangeRateDSP.Services
             {
                 var mockRates = new List<decimal>();
                 // Vygenerujeme 5 náhodných hodnot kolem reálného kurzu pro vizualizaci
-                decimal baseRate = 24.5m; // nebo si vytáhni aktuální
+                decimal baseRate = 24.5m;
                 for (int i = 0; i < 5; i++)
                 {
                     mockRates.Add(baseRate + (decimal)(random.NextDouble() * 0.4 - 0.2));
